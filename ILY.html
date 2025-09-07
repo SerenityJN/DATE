@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>For You</title>
+</head>
+<body>
+  <div class="container">
+    <div class="box">
+      <p id="mainText">Hi My Baby</p>
+      <img class="gif" id="gifImg" src="https://i.pinimg.com/originals/d8/b9/71/d8b97168488fdb3eb9533da493c8fa95.gif" alt="Sad Gif">
+      <p id="questionText">Can we go date on 20?</p>
+
+      <button class="extra-btn" id="extraBtn">Proceed to our agenda ❤️</button>
+
+      <div class="buttons">
+        <button class="yes-btn" id="yesBtn">Yes</button>
+        <button class="no-btn" id="noBtn">No</button>
+        <button class="prev-btn" id="prevBtn">Prev</button>
+        <button class="next-btn" id="nextBtn">Next</button>
+      </div>
+
+      <!-- Hidden message form -->
+      <div id="messageForm">
+        <h3>Send me a message if you agree to our date, or if you want to add or change something 💌 <br><br> PS: pa wait po hanggang may lumabas</h3>
+        <textarea id="customMessage" rows="5" placeholder="Type your message here..."></textarea><br><br>
+        <button id="sendBtn">Send</button>
+      </div>
+    </div>
+  </div>
+
+
+<!-- Load EmailJS first -->
+<!-- Load EmailJS FIRST -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<script>
+  // Initialize EmailJS after loading the SDK
+  (function(){
+    emailjs.init({
+      publicKey: "Tm20m0CFK6W8mgRBC"  // replace with your actual public key
+    });
+  })();
+
+
+    // Wait for DOM (script is at bottom but it's safe to use DOMContentLoaded)
+    document.addEventListener('DOMContentLoaded', () => {
+      const noBtn = document.getElementById("noBtn");
+      const yesBtn = document.getElementById("yesBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const prevBtn = document.getElementById("prevBtn");
+      const extraBtn = document.getElementById("extraBtn");
+      const gifImg = document.getElementById("gifImg");
+      const questionText = document.getElementById("questionText");
+      const mainText = document.getElementById("mainText");
+      const messageForm = document.getElementById("messageForm");
+      const sendBtn = document.getElementById("sendBtn");
+      let clickCount = 0;
+
+      // Agenda data
+      const agendas = [
+        {
+          title: "Agenda 1: At your Home",
+          steps: [
+            { text: "We will play online games together", gif: "https://media.tenor.com/Y-ygbcAgMxoAAAAM/puuung-gaming-together.gif" },
+            { text: "We will watch a movie", gif: "https://i.pinimg.com/originals/76/63/85/76638550b8d98f634fc0c14037433490.gif" },
+            { text: "Cuddle time", gif: "https://i.pinimg.com/originals/df/d4/63/dfd4631087fe6b50ba60adbb9de19e9b.gif" },
+            { text: "Lunch with your cooking <br><br> PS: I can't wait to taste it", gif: "https://media.tenor.com/991M04pGJ18AAAAM/cute.gif" }
+          ]
+        },
+        {
+          title: "Agenda 2: SM Bacoor 🎬",
+          steps: [
+            { text: "Watch Cinema", gif: "https://www.bworldonline.com/wp-content/uploads/2023/12/cinema.jpg" },
+            { text: "Photobooth ", gif: "https://templatesbooth.com/wp-content/uploads/2023/10/free-autumn-photo-booth-template-00-768x512.jpg" },
+            { text: "Fun House", gif: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ639YGnnhgO7hXIknXuG_XHN_EqPiiVCOJqQ&s" }
+          ]
+        },
+        {
+          title: "Agenda 3: Walk Night",
+          steps: [
+            { text: "Nightime walk", gif: "https://gifdb.com/images/high/anime-couple-walking-cherry-blossom-eyskqmjw7kc4iqwz.gif" },
+          ]
+        }
+      ];
+
+      let currentAgenda = 0;
+      let currentStep = 0;
+
+      function loadStep() {
+        const agenda = agendas[currentAgenda];
+        const step = agenda.steps[currentStep];
+        mainText.textContent = agenda.title;
+        questionText.innerHTML = step.text;
+        gifImg.src = step.gif;
+      }
+
+      // No button logic (random move + messages)
+      noBtn.addEventListener("click", () => {
+        clickCount++;
+        if (clickCount === 3) {
+          questionText.textContent = "Pleasee!";
+          gifImg.src = "https://i.pinimg.com/originals/db/9a/31/db9a31068e5698b3affca6fed8b9b670.gif";
+        } else if (clickCount === 6) {
+          questionText.innerHTML = "Are you sure? You will not change your mind? <br> Look your favorite color try to click it";
+          yesBtn.style.backgroundColor = "purple";
+          gifImg.src = "https://media.giphy.com/media/9Y5BbDSkSTiY8/giphy.gif";
+        } else if (clickCount === 8) {
+          questionText.textContent = "I promise this will be a good date";
+          yesBtn.style.backgroundColor = "purple";
+          gifImg.src = "https://64.media.tumblr.com/aa399009947afcc436c7e1cacf752a00/tumblr_inline_p94gylqNOm1qe3gum_500.gif";
+        } else if (clickCount >= 10) {
+          questionText.textContent = "Only one option left ❤️";
+          gifImg.src = "https://i.pinimg.com/originals/c6/a2/e6/c6a2e63b9ca62ad66e799255d95a0b25.gif";
+          yesBtn.style.backgroundColor = "purple";
+          noBtn.style.display = "none";
+          return;
+        }
+
+        const parent = noBtn.parentElement;
+        const parentWidth = parent.offsetWidth - noBtn.offsetWidth;
+        const parentHeight = parent.offsetHeight - noBtn.offsetHeight;
+        noBtn.style.position = "absolute";
+        noBtn.style.left = Math.floor(Math.random() * parentWidth) + "px";
+        noBtn.style.top  = Math.floor(Math.random() * parentHeight) + "px";
+      });
+
+      // Yes button logic
+      yesBtn.addEventListener("click", () => {
+        gifImg.src = "https://media.tenor.com/l7tvGwdYLJEAAAAM/excited-milk-and-mocha.gif";
+        questionText.textContent = "See you on 20 ❤️";
+        mainText.textContent = "";
+        noBtn.style.display = "none";
+        yesBtn.style.display = "none";
+        extraBtn.style.display = "block";
+        alert("I love you more ❤️");
+      });
+
+      // Start agendas
+      extraBtn.addEventListener("click", () => {
+        currentAgenda = 0;
+        currentStep = 0;
+        loadStep();
+        extraBtn.style.display = "none";
+        nextBtn.style.display = "block";
+        prevBtn.style.display = "block";
+      });
+
+      // Next button (normal flow + finish detection)
+      nextBtn.addEventListener("click", () => {
+        // If the button is in Finish state, show message form
+        if (nextBtn.textContent === "Finish") {
+          gifImg.style.display = "none";
+          questionText.style.display = "none";
+          mainText.style.display = "none";
+          prevBtn.style.display = "none";
+          nextBtn.style.display = "none";
+          messageForm.style.display = "block";
+          return;
+        }
+
+        // Normal advancing behavior
+        if (currentStep < agendas[currentAgenda].steps.length - 1) {
+          currentStep++;
+        } else if (currentAgenda < agendas.length - 1) {
+          currentAgenda++;
+          currentStep = 0;
+        } else {
+          // fallback: should not reach here because we set Finish text earlier
+        }
+
+        loadStep();
+
+        // Update next button label if last step reached
+        if (currentAgenda === agendas.length - 1 && currentStep === agendas[currentAgenda].steps.length - 1) {
+          nextBtn.textContent = "Finish";
+        } else {
+          nextBtn.textContent = "Next";
+        }
+      });
+
+      // Prev button
+      prevBtn.addEventListener("click", () => {
+        if (currentStep > 0) {
+          currentStep--;
+        } else if (currentAgenda > 0) {
+          currentAgenda--;
+          currentStep = agendas[currentAgenda].steps.length - 1;
+        }
+        loadStep();
+      });
+
+      // Send message with EmailJS (direct send)
+      document.getElementById("sendBtn").addEventListener("click", () => {
+        const message = document.getElementById("customMessage").value;
+        if (message.trim() === "") {
+          alert("Please type a message before sending!");
+          return;
+        }
+
+        // Replace with your actual service/template IDs (you already used these in your code)
+        emailjs.send("service_n6lk51d", "template_gr6duje", { message: message })
+          .then(() => {
+            alert("Your message was sent successfully! 💌");
+            document.getElementById("customMessage").value = "";
+            // optionally hide form or show a thank-you screen here
+            messageForm.style.display = "none";
+            // reset UI if you want (example: show a thank-you message)
+            mainText.textContent = "Message sent — thank you!";
+            mainText.style.display = "block";
+            window.location.href = "FLORES.html";
+          }, (error) => {
+            console.error("EmailJS error:", error);
+            alert("Oops, something went wrong: " + (error.text || JSON.stringify(error)));
+          });
+      });
+
+      // initial UI state (optional)
+      nextBtn.textContent = "Next";
+    }); // DOMContentLoaded
+  </script>
+</body>
+</html>
